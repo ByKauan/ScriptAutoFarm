@@ -228,7 +228,7 @@ local autoFarmConnection = nil
 -- Move HumanoidRootPart com velocidade ~350
 local function moveHrpTo(hrp, target, onDone)
     local distance = (target - hrp.Position).Magnitude
-    local duration = distance / 380  -- 350 studs/segundo
+    local duration = distance / 370  -- 350 studs/segundo
     local info = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
     local tween = TweenService:Create(hrp, info, {CFrame = CFrame.new(target)})
     tween:Play()
