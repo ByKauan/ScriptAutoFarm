@@ -1,0 +1,335 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+-- ScreenGui (TPS)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "Tps"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
+screenGui.DisplayOrder = 10
+
+-- GUI PRINCIPAL
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 400, 0, 350)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
+mainFrame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.2)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.ZIndex = 0
+mainFrame.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 18)
+mainCorner.Parent = mainFrame
+
+-- Fundo com imagem
+local backgroundImage = Instance.new("ImageLabel")
+backgroundImage.Name = "BackgroundImage"
+backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+backgroundImage.Position = UDim2.new(0, 0, 0, 0)
+backgroundImage.BackgroundTransparency = 1
+backgroundImage.Image = "rbxassetid://85222424985248"
+backgroundImage.ImageTransparency = 0.15
+backgroundImage.ScaleType = Enum.ScaleType.Tile
+backgroundImage.ZIndex = 1
+backgroundImage.Parent = mainFrame
+
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 25, 35)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(45, 45, 60))
+}
+gradient.Rotation = 45
+gradient.Parent = mainFrame
+
+-- Header
+local header = Instance.new("Frame")
+header.Name = "Header"
+header.Size = UDim2.new(1, 0, 0, 65)
+header.BackgroundTransparency = 1
+header.Parent = mainFrame
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 40, 0, 40)
+closeBtn.Position = UDim2.new(1, -50, 0, 12)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.TextScaled = true
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.ZIndex = 600
+closeBtn.Parent = header
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 20)
+closeCorner.Parent = closeBtn
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -60, 1, 0)
+title.Position = UDim2.new(0, 20, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Cuzinho Hub"
+title.TextColor3 = Color3.new(1,1,1)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.ZIndex = 600
+title.Parent = header
+
+-- ScrollFrame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Name = "ScrollFrame"
+scrollFrame.Size = UDim2.new(1, -20, 1, -80)
+scrollFrame.Position = UDim2.new(0, 10, 0, 70)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(60, 20, 80)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 1
+scrollFrame.ScrollBarThickness = 1
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(150, 50, 200)
+scrollFrame.ZIndex = 600
+scrollFrame.Parent = mainFrame
+
+local scrollCorner = Instance.new("UICorner")
+scrollCorner.CornerRadius = UDim.new(0, 12)
+scrollCorner.Parent = scrollFrame
+
+local scrollListLayout = Instance.new("UIListLayout")
+scrollListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+scrollListLayout.Padding = UDim.new(0, 6)
+scrollListLayout.Parent = scrollFrame
+
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollListLayout.AbsoluteContentSize.Y + 10)
+end)
+
+-- Auto Farm Toggle (AGORA MAIOR: 45 de altura)
+local autoFarmBtn = Instance.new("TextButton")
+autoFarmBtn.Name = "AutoFarmBtn"
+autoFarmBtn.Size = UDim2.new(1, 0, 0, 60)  -- 45 ao invés de 35
+autoFarmBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+autoFarmBtn.TextColor3 = Color3.new(1,1,1)
+autoFarmBtn.Text = "🔴 Auto Farm: OFF"
+autoFarmBtn.TextScaled = false
+autoFarmBtn.Font = Enum.Font.GothamBold
+autoFarmBtn.TextSize = 14
+autoFarmBtn.BorderSizePixel = 0
+autoFarmBtn.ZIndex = 600
+autoFarmBtn.LayoutOrder = 1
+autoFarmBtn.Parent = scrollFrame
+
+local autoFarmCorner = Instance.new("UICorner")
+autoFarmCorner.CornerRadius = UDim.new(0, 8)
+autoFarmCorner.Parent = autoFarmBtn
+
+-- Toggle Button (GUI principal)
+local toggleBtn = Instance.new("ImageButton")
+toggleBtn.Name = "ToggleBtn"
+toggleBtn.Size = UDim2.new(0, 100, 0, 100)
+toggleBtn.Position = UDim2.new(0, 20, 0.5, -50)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+toggleBtn.Image = "rbxassetid://113040653096663"
+toggleBtn.ImageColor3 = Color3.new(1,1,1)
+toggleBtn.ImageTransparency = 0
+toggleBtn.ScaleType = Enum.ScaleType.Fit
+toggleBtn.ZIndex = 1
+toggleBtn.Parent = screenGui
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 50)
+toggleCorner.Parent = toggleBtn
+
+-- EVENTOS GUI
+toggleBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    toggleBtn.BackgroundColor3 = mainFrame.Visible and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+end)
+
+-- ARRASTO da MainFrame
+local dragging, dragStart, startPos = false
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+header.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+header.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+------------------------------------------------------------------------
+-- AUTO FARM (tween entre waypoints, 350 studs/segundo, 15s de pausa)
+------------------------------------------------------------------------
+
+local waypointsAutofarm = {
+	Vector3.new(-54, 37, 644),
+	Vector3.new(-58, 37, 1452),
+	Vector3.new(-62, 37, 2123),
+	Vector3.new(-65, 37, 2650),
+	Vector3.new(-69, 37, 3292),
+	Vector3.new(-75, 37, 4179),
+	Vector3.new(-80, 37, 4962),
+	Vector3.new(-85, 37, 5748),
+	Vector3.new(-89, 37, 6490),
+	Vector3.new(-94, 37, 7320),
+	Vector3.new(-98, 37, 7941),
+	Vector3.new(-102, 37, 8513),
+	Vector3.new(-104, 37, 8751),
+	Vector3.new(-128, -283, 8751),
+	Vector3.new(-131, -283, 9276),
+	Vector3.new(-55, -349, 9497),
+	Vector3.new(-56, -345, 9500),
+	Vector3.new(-55, -358, 9494),
+}
+
+local isAutoFarmEnabled = false
+local autoFarmConnection = nil
+
+-- Move HumanoidRootPart com velocidade ~350
+local function moveHrpTo(hrp, target, onDone)
+	local distance = (target - hrp.Position).Magnitude
+	local duration = distance / 350  -- 350 studs/segundo
+	local info = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+	local tween = TweenService:Create(hrp, info, {CFrame = CFrame.new(target)})
+	tween:Play()
+	tween.Completed:Connect(function()
+		if onDone then onDone() end
+	end)
+end
+
+-- Percorre todos os waypoints em loop + 15s de pausa após o último
+local function runAutoFarmWaypoints(hrp)
+	local index = 1
+	local function nextWaypoint()
+		if not isAutoFarmEnabled or not hrp or not hrp.Parent then return end
+		if index > #waypointsAutofarm then
+			-- Espera 15 segundos antes de recomeçar o ciclo
+			task.spawn(function()
+				wait(15)
+				if isAutoFarmEnabled and hrp and hrp.Parent then
+					index = 1
+					nextWaypoint()
+				end
+			end)
+			return
+		end
+		local pos = waypointsAutofarm[index]
+		moveHrpTo(hrp, pos, function()
+			if isAutoFarmEnabled and hrp and hrp.Parent then
+				index = index + 1
+				nextWaypoint()
+			end
+		end)
+	end
+	nextWaypoint()
+end
+
+-- Ativar Auto Farm
+local function startAutoFarm()
+	if isAutoFarmEnabled then return end
+	isAutoFarmEnabled = true
+	autoFarmBtn.Text = "🟢 Auto Farm: ON"
+
+	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if hrp and hrp.Parent:FindFirstChild("Humanoid") then
+		runAutoFarmWaypoints(hrp)
+	end
+
+	if autoFarmConnection then autoFarmConnection:Disconnect() end
+	autoFarmConnection = player.CharacterAdded:Connect(function(char)
+		if not isAutoFarmEnabled then return end
+		local hrp = char:WaitForChild("HumanoidRootPart")
+		wait(0.3)
+		runAutoFarmWaypoints(hrp)
+	end)
+end
+
+-- Desativar Auto Farm
+local function stopAutoFarm()
+	if not isAutoFarmEnabled then return end
+	isAutoFarmEnabled = false
+	autoFarmBtn.Text = "🔴 Auto Farm: OFF"
+	if autoFarmConnection then
+		autoFarmConnection:Disconnect()
+		autoFarmConnection = nil
+	end
+end
+
+-- Toggle do botão Auto Farm
+autoFarmBtn.MouseButton1Click:Connect(function()
+	if isAutoFarmEnabled then
+		stopAutoFarm()
+	else
+		startAutoFarm()
+	end
+end)
+
+------------------------------------------------------------------------
+-- CHÃO 20×1×20 SEMPRE NOS PÉS (MESMO SE VOCÊ MORRER)
+------------------------------------------------------------------------
+
+local feetGroundBlock = nil
+
+local function createFeetGroundBlock()
+	-- Destroi o bloco anterior, se existir
+	if feetGroundBlock and feetGroundBlock.Parent then
+		feetGroundBlock:Destroy()
+	end
+
+	-- Espera o Character e o HumanoidRootPart
+	local char = player.Character or player:WaitForChild("Character")
+	local hrp = char:WaitForChild("HumanoidRootPart")
+
+	-- Cria o bloco 20×1×20
+	feetGroundBlock = Instance.new("Part")
+	feetGroundBlock.Name = "InvisiblePart"
+	feetGroundBlock.Size = Vector3.new(20, 1, 20)  -- 20, 1, 20
+	feetGroundBlock.Anchored = true
+	feetGroundBlock.Transparency = 1              -- totalmente invisível
+	feetGroundBlock.CanCollide = true             -- se quiser, mude para false
+	feetGroundBlock.CastShadow = false
+	feetGroundBlock.Parent = workspace
+
+	-- Coloca 1.5 studs abaixo do HRP (no chão, embaixo dos seus pés)
+	feetGroundBlock.CFrame = CFrame.new(hrp.Position) * CFrame.new(0, -4, 0)
+
+	-- Vincula para o HRP atual e sempre acompanhar a posição
+	RunService.Heartbeat:Connect(function()
+		if not feetGroundBlock or not feetGroundBlock.Parent then return end
+		local currentHrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+		if not currentHrp then return end
+
+		feetGroundBlock.CFrame = CFrame.new(currentHrp.Position) * CFrame.new(0, -1.5, 0)
+	end)
+end
+
+-- Quando ganhar um novo character (morreu e reapareceu)
+player.CharacterAdded:Connect(function(char)
+	createFeetGroundBlock()
+end)
+
+-- Se você já estiver vivo quando o script carregar
+if player.Character then
+	createFeetGroundBlock()
+end
